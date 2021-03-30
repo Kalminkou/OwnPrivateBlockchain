@@ -85,9 +85,10 @@ class Blockchain {
                   reject(errorList)
                 } else {
                   // Push the block to the chain
-                self.height++;
-                self.chain.push(block);
-                resolve(block)
+                  self.chain.push(block);
+                  // Update chain's height
+                  self.height++;
+                  resolve(block)
                 }
               })
               .catch((err) => {
