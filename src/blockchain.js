@@ -136,7 +136,7 @@ class Blockchain {
             // Calculate current time
             let currentTime = parseInt(new Date().getTime().toString().slice(0,-3));
 
-            if ((currentTime - msgTime < 30000)) {
+            if ((currentTime - msgTime < 300)) {
                 let checkMsg = bitcoinMessage.verify(message, address, signature);
                  if (checkMsg) {
                     const newBlock = new BlockClass.Block({'owner': address,'star': star});
