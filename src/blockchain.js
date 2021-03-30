@@ -79,7 +79,7 @@ class Blockchain {
             block.hash = SHA256(JSON.stringify(block)).toString();
 
             //Check the validity of the chain
-            await self.validateChain()
+            self.validateChain()
               .then((errorList) => {
                 if(errorList.length) {
                   reject(errorList)
@@ -222,8 +222,8 @@ class Blockchain {
     validateChain() {
         let self = this;
         let errorLog = [];
-        return new Promise(async (resolve, reject) => {
-            await self.chain.forEach((block, idx) => {
+        return new Promise( (resolve, reject) => {
+            self.chain.forEach((block, idx) => {
               // Checking block validity
               block.validate()
                 .then((valid) => {
