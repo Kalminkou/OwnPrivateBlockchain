@@ -77,18 +77,18 @@ class Blockchain {
             block.time = new Date().getTime().toString().slice(0, -3);
             // Create the hash of the block
             block.hash = SHA256(JSON.stringify(block)).toString();
-            // Push the block to the chain
-            self.height++;
-            self.chain.push(block);
 
-            console.log('-- In _addBlock: (Blockchain details):', self);
-            // Check the validity of the chain
+            //Check the validity of the chain
             await self.validateChain()
               .then((errorList) => {
                 if(errorList.length) {
                   reject(errorList)
-                }
+                } else {
+                  // Push the block to the chain
+                self.height++;
+                self.chain.push(block);
                 resolve(block)
+                }
               })
               .catch((err) => {
                 reject(err)
@@ -136,7 +136,7 @@ class Blockchain {
             // Calculate current time
             let currentTime = parseInt(new Date().getTime().toString().slice(0,-3));
 
-            if ((currentTime - msgTime < 300)) {
+            if ((currentTime - msgTime < 30000)) {
                 let checkMsg = bitcoinMessage.verify(message, address, signature);
                  if (checkMsg) {
                     const newBlock = new BlockClass.Block({'owner': address,'star': star});
@@ -161,7 +161,7 @@ class Blockchain {
     getBlockByHash(hash) {
         let self = this;
         return new Promise((resolve, reject) => {
-           let block = self.chain.filter(b => b.hash === hash)[0];
+           let block = self.chain.find(b => b.hash === hash)[0];
            if (block) {
             resolve(block);
            } else {
@@ -196,15 +196,19 @@ class Blockchain {
     getStarsByWalletAddress (address) {
         let self = this;
         let stars = [];
-        return new Promise((resolve, reject) => {
-          self.chain.forEach(async(b) => {
-            await b.getBData().then(data => {
+        return new Promise(async (resolve, reject) => {
+          await self.chain.forEach((b) => {
+            let data = b.getBData();
+
+            if (data) {
               if (data.owner === address) {
                 stars.push(data)
               }
-            });
-            resolve(stars)
+            }
+
+            // resolve(stars);
           });
+          resolve(stars)
          });
     }
 

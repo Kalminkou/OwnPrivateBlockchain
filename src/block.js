@@ -44,12 +44,17 @@ class Block {
             // Recalculate the hash of the Block
             // RAZ hash
             self.hash = null // Tricky but need to reset the hash before hashing again
-            self.hash = SHA256(JSON.stringify(self)).toString();
+            let newHash = SHA256(JSON.stringify(self)).toString();
+            // Restore the old hash
+            self.hash = currentBlockHash
 
             // Comparing if the hashes changed
             // Returning the Block is not valid
             // Returning the Block is valid
-            if(currentBlockHash === self.hash) {
+
+            // Restore the old hash
+            self.hash = currentBlockHash
+            if(currentBlockHash === newHash) {
                 resolve(true);
             } else {
                 resolve(false);
@@ -67,17 +72,17 @@ class Block {
      *     or Reject with an error.
      */
     getBData() {
-        let self = this;
-        return new Promise((resolve, reject) => {
+        //let self = this;
+        //return new Promise((resolve, reject) => {
             // Getting the encoded data saved in the Block
             // Decoding the data to retrieve the JSON representation of the object
             // Parse the data to an object to be retrieve.
-            let data = JSON.parse(hex2ascii(self.body));
+            let data = JSON.parse(hex2ascii(this.body));
             // Resolve with the data if the object isn't the Genesis block
-            if (self.height >0) {
-                resolve(data);
+            if (this.height >0) {
+                return data;
             }
-        });
+        //});
     }
 
 }

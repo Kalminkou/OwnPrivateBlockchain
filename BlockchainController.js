@@ -1,8 +1,8 @@
 /**
  *          BlockchainController
  *       (Do not change this code)
- * 
- * This class expose the endpoints that the client applications will use to interact with the 
+ *
+ * This class expose the endpoints that the client applications will use to interact with the
  * Blockchain dataset
  */
 class BlockchainController {
@@ -11,13 +11,14 @@ class BlockchainController {
     constructor(app, blockchainObj) {
         this.app = app;
         this.blockchain = blockchainObj;
-        
+
         // All the endpoints methods needs to be called in the constructor to initialize the route.
         this.getBlockByHeight();
         this.requestOwnership();
         this.submitStar();
         this.getBlockByHash();
         this.getStarsByOwner();
+        this.validateChain();
     }
 
     // Enpoint to Get a Block by Height (GET Endpoint)
@@ -34,7 +35,7 @@ class BlockchainController {
             } else {
                 return res.status(404).send("Block Not Found! Review the Parameters!");
             }
-            
+
         });
     }
 
@@ -55,7 +56,7 @@ class BlockchainController {
         });
     }
 
-    // Endpoint that allow Submit a Star, yu need first to `requestOwnership` to have the message (POST endpoint)
+    // Endpoint that allow Submit a Star, you need first to `requestOwnership` to have the message (POST endpoint)
     submitStar() {
         this.app.post("/submitstar", async (req, res) => {
             if(req.body.address && req.body.message && req.body.signature && req.body.star) {
@@ -93,7 +94,7 @@ class BlockchainController {
             } else {
                 return res.status(404).send("Block Not Found! Review the Parameters!");
             }
-            
+
         });
     }
 
@@ -115,9 +116,21 @@ class BlockchainController {
             } else {
                 return res.status(500).send("Block Not Found! Review the Parameters!");
             }
-            
+
         });
     }
+    // This endpoint allows you to request the list of Stars registered by an owner
+    validateChain() {
+      this.app.get("/validatechain", async (req, res) => {
+
+        try {
+          let errorList = await this.blockchain.validateChain();
+          return res.status(200).json(errorList);
+        } catch (error) {
+          return res.status(500).send("An error happened!");
+        }
+      });
+  }
 
 }
 
