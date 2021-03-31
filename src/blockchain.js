@@ -222,16 +222,13 @@ class Blockchain {
     validateChain() {
         let self = this;
         let errorLog = [];
-        return new Promise( (resolve, reject) => {
-            self.chain.forEach((block, idx) => {
+        return new Promise((resolve, reject) => {
+            self.chain.forEach(async (block, idx) => {
               // Checking block validity
-              block.validate()
-                .then((valid) => {
+              var valid = await block.validate()
                   if (!valid) {
                     errorLog.push({"blockHeight": block.height, "validHash": false});
                   }
-                })
-                .catch(err => console.log(err));
               // Checking previousHash validity
               if (block.height > 0) {
                 if (block.previousBlockHash !== self.chain[idx - 1].hash) {
